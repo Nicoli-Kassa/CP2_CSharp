@@ -246,7 +246,7 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 
 #### GET agencias
 
-![POST agencias](./CP2-CSharp/img/agenciasGET.png)
+![POST agencias](./CP2-CSharp/docs/img/agenciasGET.png)
 
 
 #### POST clientes PF

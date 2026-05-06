@@ -23,6 +23,20 @@ namespace CP2_CSharp.Controllers
             return await _context.Clientes.ToListAsync();
         }
 
+        // GET: api/Clientes/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Cliente>> GetCliente(int id)
+        {
+            // Tenta PF primeiro, depois PJ
+            var pf = await _context.PessoasFisicas.FirstOrDefaultAsync(c => c.Id == id);
+            if (pf != null) return Ok(pf);
+
+            var pj = await _context.PessoasJuridicas.FirstOrDefaultAsync(c => c.Id == id);
+            if (pj != null) return Ok(pj);
+
+            return NotFound("Cliente não encontrado.");
+        }
+
         // POST: api/Clientes/pf
         [HttpPost("pf")]
         public async Task<ActionResult<PessoaFisica>> CadastrarPF(PessoaFisica pf)

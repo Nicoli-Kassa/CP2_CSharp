@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CP2_CSharp.Migrations
 {
     /// <inheritdoc />
-    public partial class IniciarEstrutura : Migration
+    public partial class EstruturaInicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,8 @@ namespace CP2_CSharp.Migrations
                 {
                     Id = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    Nome = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
+                    Nome = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Cidade = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,18 +26,17 @@ namespace CP2_CSharp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Contratacoes",
+                name: "Produtos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "NUMBER(10)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    ClienteId = table.Column<int>(type: "NUMBER(10)", nullable: false),
-                    ValorSolicitado = table.Column<decimal>(type: "DECIMAL(18,2)", precision: 18, scale: 2, nullable: false),
-                    Status = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
+                    Nome = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Descricao = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contratacoes", x => x.Id);
+                    table.PrimaryKey("PK_Produtos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,6 +55,49 @@ namespace CP2_CSharp.Migrations
                         name: "FK_Clientes_Agencias_AgenciaId",
                         column: x => x.AgenciaId,
                         principalTable: "Agencias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contratacoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
+                    ClienteId = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    ProdutoId = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    ValorSolicitado = table.Column<decimal>(type: "DECIMAL(18,2)", precision: 18, scale: 2, nullable: false),
+                    Status = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    SolicitadoEm = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contratacoes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contratacoes_Produtos_ProdutoId",
+                        column: x => x.ProdutoId,
+                        principalTable: "Produtos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Emprestimos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    ValorMaximo = table.Column<decimal>(type: "DECIMAL(18,2)", precision: 18, scale: 2, nullable: false),
+                    TaxaJuros = table.Column<decimal>(type: "DECIMAL(5,2)", precision: 5, scale: 2, nullable: false),
+                    PrazoMeses = table.Column<int>(type: "NUMBER(10)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Emprestimos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Emprestimos_Produtos_Id",
+                        column: x => x.Id,
+                        principalTable: "Produtos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -103,6 +146,11 @@ namespace CP2_CSharp.Migrations
                 column: "AgenciaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Contratacoes_ProdutoId",
+                table: "Contratacoes",
+                column: "ProdutoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PessoasFisicas_Cpf",
                 table: "PessoasFisicas",
                 column: "Cpf",
@@ -124,10 +172,16 @@ namespace CP2_CSharp.Migrations
                 name: "Contratacoes");
 
             migrationBuilder.DropTable(
+                name: "Emprestimos");
+
+            migrationBuilder.DropTable(
                 name: "PessoasFisicas");
 
             migrationBuilder.DropTable(
                 name: "PessoasJuridicas");
+
+            migrationBuilder.DropTable(
+                name: "Produtos");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

@@ -39,18 +39,30 @@ namespace CP2_CSharp.Controllers
             {
                 return StatusCode(500, "Erro ao salvar contratação.");
             }
-             
+
             _ = Task.Run(async () =>
             {
                 using var scope = _scopeFactory.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                await Task.Delay(3000); // simula fila
+                await Task.Delay(3000);  
 
-                var c = await context.Contratacoes.FindAsync(contratacao.Id);
+                var c = await context.Contratacoes
+                    .Include(x => x.Produto)
+                    .FirstOrDefaultAsync(x => x.Id == contratacao.Id);
+
                 if (c != null)
-                { 
-                    c.Status = c.ValorSolicitado > 5000 ? "REPROVADO" : "APROVADO";
+                {
+                    if (c.Produto is Emprestimo emprestimo)
+                    {
+                        var resultado = emprestimo.Avaliar(c.ValorSolicitado);
+                        c.Status = resultado.StartsWith("REPROVADO") ? "REPROVADO" : "APROVADO";
+                    }
+                    else
+                    { 
+                        c.Status = c.ValorSolicitado > 5000 ? "REPROVADO" : "APROVADO";
+                    }
+
                     await context.SaveChangesAsync();
                 }
             });

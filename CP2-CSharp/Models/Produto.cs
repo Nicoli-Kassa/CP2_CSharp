@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CP2_CSharp.Models
 {
-    [Table("Agencias")]
-    public class Agencia
+    [Table("Produtos")]
+    public abstract class Produto
     {
         [Key]
         public int Id { get; set; }
@@ -12,7 +12,6 @@ namespace CP2_CSharp.Models
         [Required]
         public string Nome { get; set; } = string.Empty;
 
-        [Required]
-        public string Cidade { get; set; } = string.Empty;
+        public string Descricao { get; set; } = string.Empty;
     }
 }

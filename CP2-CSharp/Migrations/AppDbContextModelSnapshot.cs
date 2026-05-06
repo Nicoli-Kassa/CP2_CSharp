@@ -30,6 +30,10 @@ namespace CP2_CSharp.Migrations
 
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Cidade")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
@@ -74,6 +78,12 @@ namespace CP2_CSharp.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("NUMBER(10)");
 
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<DateTime>("SolicitadoEm")
+                        .HasColumnType("TIMESTAMP(7)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)");
@@ -84,7 +94,32 @@ namespace CP2_CSharp.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProdutoId");
+
                     b.ToTable("Contratacoes");
+                });
+
+            modelBuilder.Entity("CP2_CSharp.Models.Produto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("NUMBER(10)");
+
+                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Produtos", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("CP2_CSharp.Models.PessoaFisica", b =>
@@ -124,6 +159,24 @@ namespace CP2_CSharp.Migrations
                     b.ToTable("PessoasJuridicas", (string)null);
                 });
 
+            modelBuilder.Entity("CP2_CSharp.Models.Emprestimo", b =>
+                {
+                    b.HasBaseType("CP2_CSharp.Models.Produto");
+
+                    b.Property<int>("PrazoMeses")
+                        .HasColumnType("NUMBER(10)");
+
+                    b.Property<decimal>("TaxaJuros")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("DECIMAL(5,2)");
+
+                    b.Property<decimal>("ValorMaximo")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("DECIMAL(18,2)");
+
+                    b.ToTable("Emprestimos", (string)null);
+                });
+
             modelBuilder.Entity("CP2_CSharp.Models.Cliente", b =>
                 {
                     b.HasOne("CP2_CSharp.Models.Agencia", "Agencia")
@@ -133,6 +186,17 @@ namespace CP2_CSharp.Migrations
                         .IsRequired();
 
                     b.Navigation("Agencia");
+                });
+
+            modelBuilder.Entity("CP2_CSharp.Models.Contratacao", b =>
+                {
+                    b.HasOne("CP2_CSharp.Models.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("CP2_CSharp.Models.PessoaFisica", b =>
@@ -149,6 +213,15 @@ namespace CP2_CSharp.Migrations
                     b.HasOne("CP2_CSharp.Models.Cliente", null)
                         .WithOne()
                         .HasForeignKey("CP2_CSharp.Models.PessoaJuridica", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CP2_CSharp.Models.Emprestimo", b =>
+                {
+                    b.HasOne("CP2_CSharp.Models.Produto", null)
+                        .WithOne()
+                        .HasForeignKey("CP2_CSharp.Models.Emprestimo", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

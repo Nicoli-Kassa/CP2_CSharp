@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CP2_CSharp.Migrations
 {
     /// <inheritdoc />
-    public partial class EstruturaInicial : Migration
+    public partial class CriandoEstrutura : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

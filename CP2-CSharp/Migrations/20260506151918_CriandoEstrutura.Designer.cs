@@ -12,8 +12,8 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace CP2_CSharp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260506145253_EstruturaInicial")]
-    partial class EstruturaInicial
+    [Migration("20260506151918_CriandoEstrutura")]
+    partial class CriandoEstrutura
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -7,21 +7,19 @@
 | Isabelle Dallabeneta Carlesso | RM554592 |
 | Nicoli Amy Kassa | RM559104 |
 
-
 ---
 
 ## 2. Produto bancário escolhido
 
 **Produto:** Empréstimo (`Emprestimo`)
 
-**Justificativa:** O produto de empréstimo foi escolhido por permitir a implementação de uma regra de negócio clara e objetiva: a análise e aprovação do crédito com base no valor solicitado pelo cliente. Isso viabiliza a demonstração completa do fluxo de contratação — desde o cadastro do cliente até a aprovação ou recusa — de forma síncrona e rastreável, sem depender de integrações externas complexas.
+**Justificativa:** O produto de empréstimo foi escolhido por permitir a implementação de uma regra de negócio clara e objetiva: a análise e aprovação do crédito com base no valor solicitado, no valor máximo permitido, na taxa de juros e no prazo em meses. Isso viabiliza a demonstração completa do fluxo de contratação — desde o cadastro do cliente até a aprovação ou recusa — de forma assíncrona e rastreável.
 
 ---
 
 ## 3. Diagrama de classes
 
-
-
+![Diagrama de Classes](./CP2-CSharp/docs/img/diagrama-classe.png)
 
 ---
 
@@ -40,7 +38,7 @@ Edite o arquivo `appsettings.json` na raiz do projeto:
 ```json
 "ConnectionStrings": {
     "OracleConnection": "User Id=RMXXXXXX;Password=DDMMAA;Data Source=oracle.fiap.com.br:1521/ORCL"
-  }
+}
 ```
 
 ### Aplicar as migrations
@@ -75,8 +73,14 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 ```json
 {
   "id": 1,
-  "nome": "Agência Central"
+  "nome": "Agência Central",
+  "cidade": "São Paulo"
 }
+```
+
+**Response `400 Bad Request` (nome vazio):**
+```json
+"Nome da agência é obrigatório."
 ```
 
 ---
@@ -87,7 +91,8 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 ```json
 {
   "id": 1,
-  "nome": "Agência Central"
+  "nome": "Agência Central",
+  "cidade": "São Paulo"
 }
 ```
 
@@ -120,7 +125,8 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
   "agenciaId": 1,
   "agencia": {
     "id": 1,
-    "nome": "Agência Central"
+    "nome": "Agência Central",
+    "cidade": "São Paulo"
   }
 }
 ```
@@ -128,7 +134,7 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 **Response `400 Bad Request` (CPF duplicado):**
 ```json
 "CPF já cadastrado."
-```
+``` 
 
 **Response `404 Not Found` (agência inexistente):**
 ```json
@@ -159,7 +165,8 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
   "agenciaId": 1,
   "agencia": {
     "id": 1,
-    "nome": "Agência Central"
+    "nome": "Agência Central",
+    "cidade": "São Paulo"
   }
 }
 ```
@@ -169,16 +176,23 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 "CNPJ já cadastrado."
 ```
 
+**Response `404 Not Found` (agência inexistente):**
+```json
+"Agência não encontrada."
+```
+
 ---
 
 ### GET `/api/clientes/{id}` — Buscar cliente por ID
 
-**Response `200 OK`:**
+**Response `200 OK` (Pessoa Física):**
 ```json
 {
-    "id": 1,
-    "nome": "João Silva",
-    "agenciaId": 1,
+  "cpf": "123.456.789-00",
+  "dataNascimento": "1990-05-15T00:00:00",
+  "id": 1,
+  "nome": "João Silva",
+  "agenciaId": 1
 }
 ```
 
@@ -189,13 +203,76 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 
 ---
 
+### POST `/api/emprestimos` — Cadastrar produto de empréstimo
+
+**Request:**
+```json
+{
+  "nome": "Empréstimo Pessoal",
+  "descricao": "Crédito para uso pessoal",
+  "valorMaximo": 10000.00,
+  "taxaJuros": 5.5,
+  "prazoMeses": 24
+}
+```
+
+**Response `201 Created`:**
+```json
+{
+  "id": 1,
+  "nome": "Empréstimo Pessoal",
+  "descricao": "Crédito para uso pessoal",
+  "valorMaximo": 10000.00,
+  "taxaJuros": 5.5,
+  "prazoMeses": 24
+}
+```
+
+**Response `400 Bad Request` (valor máximo inválido):**
+```json
+"Valor máximo deve ser maior que zero."
+```
+
+**Response `400 Bad Request` (taxa de juros inválida):**
+```json
+"Taxa de juros inválida."
+```
+
+**Response `400 Bad Request` (prazo inválido):**
+```json
+"Prazo em meses deve ser maior que zero."
+```
+
+---
+
+### GET `/api/emprestimos/{id}` — Buscar empréstimo por ID
+
+**Response `200 OK`:**
+```json
+{
+  "id": 1,
+  "nome": "Empréstimo Pessoal",
+  "descricao": "Crédito para uso pessoal",
+  "valorMaximo": 10000.00,
+  "taxaJuros": 5.5,
+  "prazoMeses": 24
+}
+```
+
+**Response `404 Not Found`:**
+```json
+"Empréstimo não encontrado."
+```
+
+---
+
 ### POST `/api/contratacoes` — Solicitar contratação
 
 **Request:**
 ```json
 {
   "clienteId": 1,
-  "produto": "Emprestimo",
+  "produtoId": 1,
   "valorSolicitado": 5000.00
 }
 ```
@@ -214,7 +291,17 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 "Cliente não encontrado."
 ```
 
-**Regra de negócio:** Empréstimos com `valorSolicitado` acima de R$ 10.000,00 são automaticamente recusados. Valores iguais ou inferiores são aprovados.
+**Response `400 Bad Request` (valor acima do limite do produto):**
+```json
+"Valor solicitado acima do limite permitido para este empréstimo."
+```
+
+**Response `500 Internal Server Error` (falha ao salvar no banco):**
+```json
+"Erro ao salvar contratação."
+```
+
+**Regra de negócio:** O empréstimo é avaliado com base em três critérios: o valor solicitado não pode ultrapassar o `valorMaximo` do produto; a taxa de juros é aplicada sobre o prazo em meses para calcular o total a pagar; taxas acima de 10% geram aprovação com ressalva. Valores acima do limite são automaticamente reprovados.
 
 ---
 
@@ -225,8 +312,10 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 {
   "id": 1,
   "clienteId": 1,
-  "valorSolicitado": 5000,
-  "status": "APROVADO"
+  "produtoId": 1,
+  "valorSolicitado": 5000.00,
+  "status": "APROVADO",
+  "solicitadoEm": "2026-05-06T14:00:00Z"
 }
 ```
 
@@ -234,7 +323,6 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 ```json
 "Contratação não encontrada."
 ```
- 
 
 ---
 
@@ -246,8 +334,7 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 
 #### GET agencias
 
-![POST agencias](./CP2-CSharp/docs/img/agenciasGET.png)
-
+![GET agencias](./CP2-CSharp/docs/img/agenciasGET.png)
 
 #### POST clientes PF
 
@@ -257,54 +344,69 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 
 ![POST clientes PJ](./CP2-CSharp/docs/img/clientePJ.png)
 
-#### GET clientes 
+#### GET clientes por ID
 
-![POST clientes PJ](./CP2-CSharp/docs/img/clienteGET.png)
+![GET clientes por ID](./CP2-CSharp/docs/img/clienteGET.png)
+
+#### POST emprestimos
+
+![POST emprestimos](./CP2-CSharp/docs/img/emprestimoPOST.png)
 
 #### POST contratacoes
 
-![POST clientes PJ](./CP2-CSharp/docs/img/contratacaoPOST.png)
+![POST contratacoes](./CP2-CSharp/docs/img/contratacaoPOST.png)
 
 #### GET contratacoes
 
-![POST clientes PJ](./CP2-CSharp/docs/img/contratacaoGET.png)
+![GET contratacoes](./CP2-CSharp/docs/img/contratacaoGET.png)
 
 #### GET ID contratacoes
 
-![POST clientes PJ](./CP2-CSharp/docs/img/contratacaoGETid.png)
-
+![GET ID contratacoes](./CP2-CSharp/docs/img/contratacaoGETid.png)
 
 ---
 
 ## 7. Testes de erros
 
+#### Cadastro de agência com nome vazio → `400`
+
+![Nome da agência vazio](./CP2-CSharp/docs/img/agenciasNomeVazio.png)
+
 #### Cadastro de PF com CPF duplicado → `400`
 
-![Print dos testes](./CP2-CSharp/docs/img/clienteCPFduplicado.png)
-
+![CPF duplicado](./CP2-CSharp/docs/img/clienteCPFduplicado.png) 
 
 #### Cadastro de PJ com CNPJ duplicado → `400`
 
-![Print dos testes](./CP2-CSharp/docs/img/clienteCNPJduplicado.png)
-
+![CNPJ duplicado](./CP2-CSharp/docs/img/clienteCNPJduplicado.png)
 
 #### Vincular cliente a agência inexistente → `404`
 
-![Print dos testes](./CP2-CSharp/docs/img/clienteAgenciaNaoEncontrada.png)
+![Agência não encontrada](./CP2-CSharp/docs/img/clienteAgenciaNaoEncontrada.png)
 
+#### Cadastro de empréstimo com taxa de juros inválida → `400`
+
+![Taxa de juros inválida](./CP2-CSharp/docs/img/emprestimoTaxaJurosInva.png)
+
+#### Cadastro de empréstimo com prazo inválido → `400`
+
+![Prazo inválido](./CP2-CSharp/docs/img/emprestimoPrazoInva.png)
+
+#### Contratação com valor acima do limite do produto → `400`
+
+![Valor acima do limite](./CP2-CSharp/docs/img/emprestimoValorMaxInva.png)
 
 #### Contratação para cliente inexistente → `404`
 
-![Print dos testes](./CP2-CSharp/docs/img/contratacaoClienteNaoEncontrado.png)
-
+![Cliente não encontrado](./CP2-CSharp/docs/img/contratacaoClienteNaoEncontrado.png)
 
 #### Consulta de status após processamento → `200`
- 
-![Print dos testes](./CP2-CSharp/docs/img/contratacaoPendente.png)
-![Print dos testes](./CP2-CSharp/docs/img/contratacaoAprovada.png)
+
+![Contratação pendente](./CP2-CSharp/docs/img/contratacaoPendente.png)
+![Contratação aprovada](./CP2-CSharp/docs/img/contratacaoAprovada.png)
 
 ---
 
-## 8. API no Swagger  
+## 8. API no Swagger
 
 ![API no Swagger](./CP2-CSharp/docs/img/APISwagger.png)

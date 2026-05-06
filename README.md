@@ -242,36 +242,36 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 
 #### POST agencias
 
-![POST agencias](./docs/img/agenciasPOST.png)
+![POST agencias](./CP2-CSharp/docs/img/agenciasPOST.png)
 
 #### GET agencias
 
-![POST agencias](./docs/img/agenciasGET.png)
+![POST agencias](./CP2-CSharp/img/agenciasGET.png)
 
 
 #### POST clientes PF
 
-![POST clientes PF](./docs/img/clientePF.png)
+![POST clientes PF](./CP2-CSharp/docs/img/clientePF.png)
 
 #### POST clientes PJ
 
-![POST clientes PJ](./docs/img/clientePJ.png)
+![POST clientes PJ](./CP2-CSharp/docs/img/clientePJ.png)
 
 #### GET clientes 
 
-![POST clientes PJ](./docs/img/clienteGET.png)
+![POST clientes PJ](./CP2-CSharp/docs/img/clienteGET.png)
 
 #### POST contratacoes
 
-![POST clientes PJ](./docs/img/contratacaoPOST.png)
+![POST clientes PJ](./CP2-CSharp/docs/img/contratacaoPOST.png)
 
 #### GET contratacoes
 
-![POST clientes PJ](./docs/img/contratacaoGET.png)
+![POST clientes PJ](./CP2-CSharp/docs/img/contratacaoGET.png)
 
 #### GET ID contratacoes
 
-![POST clientes PJ](./docs/img/contratacaoGETid.png)
+![POST clientes PJ](./CP2-CSharp/docs/img/contratacaoGETid.png)
 
 
 ---
@@ -280,31 +280,31 @@ A API estará disponível em `https://localhost:{porta}/swagger`.
 
 #### Cadastro de PF com CPF duplicado → `400`
 
-![Print dos testes](./docs/img/clienteCPFduplicado.png)
+![Print dos testes](./CP2-CSharp/docs/img/clienteCPFduplicado.png)
 
 
 #### Cadastro de PJ com CNPJ duplicado → `400`
 
-![Print dos testes](./docs/img/clienteCNPJduplicado.png)
+![Print dos testes](./CP2-CSharp/docs/img/clienteCNPJduplicado.png)
 
 
 #### Vincular cliente a agência inexistente → `404`
 
-![Print dos testes](./docs/img/clienteAgenciaNaoEncontrada.png)
+![Print dos testes](./CP2-CSharp/docs/img/clienteAgenciaNaoEncontrada.png)
 
 
 #### Contratação para cliente inexistente → `404`
 
-![Print dos testes](./docs/img/contratacaoClienteNaoEncontrado.png)
+![Print dos testes](./CP2-CSharp/docs/img/contratacaoClienteNaoEncontrado.png)
 
 
 #### Consulta de status após processamento → `200`
  
-![Print dos testes](./docs/img/contratacaoPendente.png)
-![Print dos testes](./docs/img/contratacaoAprovada.png)
+![Print dos testes](./CP2-CSharp/docs/img/contratacaoPendente.png)
+![Print dos testes](./CP2-CSharp/docs/img/contratacaoAprovada.png)
 
 ---
 
 ## 8. API no Swagger  
 
-![API no Swagger](./docs/img/APISwagger.png)
+![API no Swagger](./CP2-CSharp/docs/img/APISwagger.png)

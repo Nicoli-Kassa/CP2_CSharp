@@ -20,33 +20,8 @@
 
 ## 3. Diagrama de classes
 
-![Diagrama de Classes](./docs/diagrama-classe.png)
-
-#### Descrição do Diagrama de Classes
-**Entidades Principais**
-- O sistema é composto por clientes, agências, produtos financeiros e contratações
-- `Cliente` é a classe base abstrata, herdada por `PessoaFisica` e `PessoaJuridica`
-- `Produto` é a classe base abstrata dos produtos financeiros, herdada por `Emprestimo`, `MaquinaDeCartao` e `ReceberSalario`
 
 
-**Herança**
-- `PessoaFisica` estende `Cliente` adicionando `Cpf` e `DataNascimento`
-- `PessoaJuridica` estende `Cliente` adicionando `Cnpj` e `RazaoSocial`
-- `Emprestimo` estende `Produto` com taxa de juros, valor máximo e prazo
-- `MaquinaDeCartao` estende `Produto` com taxa MDR e modelo do equipamento
-- `ReceberSalario` estende `Produto` com convênio e empresa empregadora
-
-**Relacionamentos**
-- Uma `Agencia` possui múltiplos `Clientes` (1 para N)
-- Um `Cliente` pode solicitar múltiplas `Contratacoes` (1 para N)
-
-**Contratação**
-- Registra qual cliente solicitou, qual produto, o valor solicitado, o status (Aprovado/Recusado) e a data/hora da solicitação
-
-**Regras de Negócio nos Produtos**
-- `Emprestimo` possui método `Avaliar()` para aprovar ou recusar com base nos critérios
-- `MaquinaDeCartao` possui método `Ativar()` para ativação do equipamento
-- `ReceberSalario` possui método `ValidarConvenio()` para validar o vínculo empregatício
 
 ---
 

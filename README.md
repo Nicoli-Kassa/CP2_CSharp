@@ -19,7 +19,7 @@
 
 ## 3. Diagrama de classes
 
-![Diagrama de Classes](./CP2-CSharp/docs/diagrama-classe.jfif)
+![Diagrama de Classes](./CP2-CSharp/docs/diagrama-classe.png)
 
 #### Descrição do Diagrama de Classes*
 
